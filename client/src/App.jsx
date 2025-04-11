@@ -6,23 +6,30 @@ import ChatInterface from "./components/ChatInterface"
 
 function App() {
   const [showChat, setShowChat] = useState(false)
+  const [chatKey, setChatKey] = useState(0) // Add a key to force re-render
+
+  // Function to start a new chat
+  const startNewChat = () => {
+    if (showChat) {
+      // If already in a chat, increment the key to reset the component
+      setChatKey(prevKey => prevKey + 1)
+    } else {
+      // If not in a chat yet, just show the chat interface
+      setShowChat(true)
+    }
+  }
 
   return (
     <div className="flex h-screen bg-black text-white">
       {/* Sidebar */}
       <div className="w-64 border-r border-gray-800 flex flex-col">
         <div className="p-4 flex flex-col gap-2">
-          <button className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800">
+          <button 
+            className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800"
+            onClick={startNewChat}
+          >
             <span className="w-6 h-6 flex items-center justify-center bg-amber-500 text-black rounded-md">+</span>
             <span>New Chat</span>
-          </button>
-          <button className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800">
-            <span className="w-6 h-6 flex items-center justify-center bg-gray-700 rounded-md">+...</span>
-            <span>New Folder</span>
-          </button>
-          <button className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800">
-            <span className="w-6 h-6 flex items-center justify-center bg-gray-700 rounded-md">&lt;</span>
-            <span>Previous</span>
           </button>
         </div>
 
@@ -63,7 +70,10 @@ function App() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {showChat ? (
-          <ChatInterface onBack={() => setShowChat(false)} />
+          <ChatInterface 
+            key={chatKey} // Add key prop to force re-render
+            onBack={() => setShowChat(false)} 
+          />
         ) : (
           <>
             {/* Navigation */}
@@ -86,7 +96,7 @@ function App() {
               <h1 className="text-5xl font-bold mb-12">Legal Advisor AI</h1>
 
               <button
-                onClick={() => setShowChat(true)}
+                onClick={startNewChat}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 mb-12"
               >
                 Get Started <ArrowRight size={20} />
